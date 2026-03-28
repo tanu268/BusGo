@@ -132,19 +132,16 @@ The admin panel provides management tools, analytics, and an assistant for platf
 * Tailwind CSS
 * React Router
 * Lucide React / UI icons
-* Framer Motion (if used)
+
 
 ### Backend
 
-* Node.js
-* Express
+* Django
 * REST APIs
-* JWT / session-based authentication (if used)
 
 ### Database
 
-* MySQL / PostgreSQL / your configured database
-
+* MySQL 
 ### Integrations
 
 * Razorpay for payment flow
