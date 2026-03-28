@@ -20,7 +20,7 @@ It is designed to demonstrate a complete travel-booking journey from login to bo
 
 ---
 
-## 📸 Project Story / Walkthrough
+## 📸 Project Walkthrough
 
 ### 1) Landing Page
 
