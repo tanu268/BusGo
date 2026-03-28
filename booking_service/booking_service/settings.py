@@ -15,20 +15,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY SETTINGS
 # ================================
 
-SECRET_KEY = os.getenv("django-insecure-t-c4k*btbbq*w)4$3)qcqr80z-fr%vo#4+j5cbu-irn#sdl6h^")
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-t-c4k*btbbq*w)4$3)qcqr80z-fr%vo#4+j5cbu-irn#sdl6h^")
 
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 # ================================
 # API KEYS (SECURE)
 # ================================
 
-GROQ_API_KEY = os.getenv("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")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-RAZORPAY_KEY_ID = os.getenv("rzp_test_SNF5yHYJl6KGco")
-RAZORPAY_KEY_SECRET = os.getenv("LqBTbtAuWpnXzXIKIrC0xA1M")
+RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
 
 # ================================
 # APPLICATIONS
@@ -112,9 +112,9 @@ WSGI_APPLICATION = 'booking_service.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv("DB_NAME"),
-        'USER': os.getenv("DB_USER"),
-        'PASSWORD': os.getenv("DB_PASSWORD"),
+        'NAME': os.getenv("DB_NAME", "booking_db"),
+        'USER': os.getenv("DB_USER", "root"),
+        'PASSWORD': os.getenv("DB_PASSWORD", ""),
         'HOST': os.getenv("DB_HOST", "localhost"),
         'PORT': os.getenv("DB_PORT", "3306"),
     }

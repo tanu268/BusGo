@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Bus, Shield, Clock, ArrowRight, MapPin, Navigation } from "lucide-react";
+import { Search, Shield, Clock, ArrowRight, MapPin, Navigation, Calendar } from "lucide-react";
 
 const Index = () => {
   const [source, setSource] = useState("");
   const [destination, setDestination] = useState("");
+  const [date, setDate] = useState(() => new Date().toISOString().split("T")[0]);
   const navigate = useNavigate();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (source.trim() && destination.trim()) {
       navigate(
-        `/search?source=${encodeURIComponent(source.trim())}&destination=${encodeURIComponent(destination.trim())}`
+        `/search?source=${encodeURIComponent(source.trim())}&destination=${encodeURIComponent(destination.trim())}&date=${encodeURIComponent(date)}`
       );
     }
   };
@@ -41,17 +42,16 @@ const Index = () => {
   ];
 
   const popularRoutes = [
-    { from: "Delhi", to: "Jaipur" },
-    { from: "Mumbai", to: "Pune" },
+    { from: "Delhi",     to: "Jaipur"  },
+    { from: "Mumbai",    to: "Pune"    },
     { from: "Bangalore", to: "Chennai" },
-    { from: "Hyderabad", to: "Vizag" },
+    { from: "Hyderabad", to: "Vizag"   },
   ];
 
   return (
     <div className="busgo-home">
       {/* ── Hero ─────────────────────────────────────────────── */}
       <section className="busgo-hero">
-        {/* Background layers */}
         <div className="busgo-hero-bg" />
         <div className="busgo-hero-grid" />
         <div className="busgo-hero-glow busgo-glow-left" />
@@ -74,9 +74,16 @@ const Index = () => {
             Search routes, compare options, and book your seat in seconds.
           </p>
 
-          {/* Search card */}
-          <form onSubmit={handleSearch} className="busgo-search-card">
-            <div className="busgo-search-fields">
+          {/* ── Search card ──
+               Override the card's flex direction so rows stack vertically.
+               padding:0 lets each inner row control its own spacing.        */}
+          <form
+            onSubmit={handleSearch}
+            className="busgo-search-card"
+            style={{ display:"flex", flexDirection:"column", padding:0, overflow:"hidden" }}
+          >
+            {/* Row 1: Source / Swap / Destination */}
+            <div className="busgo-search-fields" style={{ padding:"12px 16px" }}>
               <div className="busgo-search-field">
                 <MapPin className="busgo-field-icon" />
                 <input
@@ -94,11 +101,7 @@ const Index = () => {
                 <button
                   type="button"
                   className="busgo-swap-btn"
-                  onClick={() => {
-                    const tmp = source;
-                    setSource(destination);
-                    setDestination(tmp);
-                  }}
+                  onClick={() => { const t = source; setSource(destination); setDestination(t); }}
                   title="Swap cities"
                 >
                   ⇄
@@ -119,10 +122,58 @@ const Index = () => {
               </div>
             </div>
 
-            <button type="submit" className="busgo-search-btn">
-              <Search className="busgo-btn-icon" />
-              Search Buses
-            </button>
+            {/* Row 2: Date picker — full width below source/dest */}
+            <div style={{
+              display:"flex",
+              alignItems:"center",
+              gap:"12px",
+              padding:"12px 20px",
+              borderTop:"1px solid rgba(255,255,255,0.07)",
+              background:"rgba(255,255,255,0.04)",
+            }}>
+              <Calendar size={15} color="#a5b4fc" style={{ flexShrink:0 }} />
+              <span style={{
+                fontSize:"13px",
+                color:"rgba(255,255,255,0.45)",
+                fontWeight:500,
+                whiteSpace:"nowrap",
+              }}>
+                Travel Date
+              </span>
+              <input
+                type="date"
+                value={date}
+                min={new Date().toISOString().split("T")[0]}
+                onChange={(e) => setDate(e.target.value)}
+                required
+                style={{
+                  flex:1,
+                  background:"transparent",
+                  border:"none",
+                  outline:"none",
+                  color:"#c7d2fe",
+                  fontSize:"14px",
+                  fontWeight:600,
+                  cursor:"pointer",
+                  colorScheme:"dark",
+                }}
+              />
+            </div>
+
+            {/* Row 3: Search button — full width */}
+            <div style={{
+              padding:"12px 16px",
+              borderTop:"1px solid rgba(255,255,255,0.07)",
+            }}>
+              <button
+                type="submit"
+                className="busgo-search-btn"
+                style={{ width:"100%", margin:0, justifyContent:"center" }}
+              >
+                <Search className="busgo-btn-icon" />
+                Search Buses
+              </button>
+            </div>
           </form>
 
           {/* Popular routes */}
@@ -133,10 +184,7 @@ const Index = () => {
                 key={`${r.from}-${r.to}`}
                 type="button"
                 className="busgo-route-pill"
-                onClick={() => {
-                  setSource(r.from);
-                  setDestination(r.to);
-                }}
+                onClick={() => { setSource(r.from); setDestination(r.to); }}
               >
                 {r.from} → {r.to}
               </button>
@@ -144,14 +192,13 @@ const Index = () => {
           </div>
         </div>
       </section>
-
       {/* ── Stats strip ──────────────────────────────────────── */}
       <section className="busgo-stats">
         {[
-          { value: "500+", label: "Routes covered" },
-          { value: "1,200+", label: "Daily schedules" },
-          { value: "98%", label: "On-time rate" },
-          { value: "50K+", label: "Happy travellers" },
+          { value:"",   label:"Routes covered"   },
+          { value:"", label:"Daily schedules"  },
+          { value:"",    label:"On-time rate"     },
+          { value:"",   label:"Happy travellers" },
         ].map((s) => (
           <div key={s.label} className="busgo-stat">
             <span className="busgo-stat-value">{s.value}</span>
@@ -159,6 +206,7 @@ const Index = () => {
           </div>
         ))}
       </section>
+
 
       {/* ── Features ─────────────────────────────────────────── */}
       <section className="busgo-features">
@@ -168,19 +216,15 @@ const Index = () => {
             Everything you need for a smooth journey, all in one place.
           </p>
         </div>
-
         <div className="busgo-feature-grid">
           {features.map((f) => (
             <div key={f.title} className="busgo-feature-card">
-              <div
-                className="busgo-feature-icon-wrap"
-                style={{ background: f.bg, color: f.accent }}
-              >
+              <div className="busgo-feature-icon-wrap" style={{ background:f.bg, color:f.accent }}>
                 <f.icon size={22} />
               </div>
               <h3 className="busgo-feature-title">{f.title}</h3>
               <p className="busgo-feature-desc">{f.desc}</p>
-              <div className="busgo-feature-arrow" style={{ color: f.accent }}>
+              <div className="busgo-feature-arrow" style={{ color:f.accent }}>
                 <ArrowRight size={16} />
               </div>
             </div>

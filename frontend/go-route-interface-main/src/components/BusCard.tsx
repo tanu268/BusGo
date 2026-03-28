@@ -23,14 +23,47 @@ interface BusResult {
   fare:         string;
   bus_type:     string;
   seats:        number;
-  total_seats?: number; // optional: add if your API returns it
+  total_seats?: number;
   scores:       BusScores;
   confidence:   number;
   reason:       string;
 }
 
 interface BusCardProps {
-  bus: BusResult;
+  bus:        BusResult;
+  travelDate?: string; // "YYYY-MM-DD"
+}
+
+// ─── Date helpers ─────────────────────────────────────────────────────────────
+
+// Parse "HH:MM" or "HH:MM:SS" → total minutes
+function timeToMinutes(t: string): number {
+  const [h, m] = t.split(":").map(Number);
+  return h * 60 + m;
+}
+
+// Format "YYYY-MM-DD" → "Mon, 28 Mar"
+function formatShortDate(dateStr: string): string {
+  const d = new Date(dateStr + "T00:00:00");
+  return d.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
+}
+
+// Add N days to a "YYYY-MM-DD" string
+function addDays(dateStr: string, n: number): string {
+  const d = new Date(dateStr + "T00:00:00");
+  d.setDate(d.getDate() + n);
+  return d.toISOString().split("T")[0];
+}
+
+// Given travelDate + departure/arrival time strings, return:
+//   { depDate, arrDate, isOvernight }
+function resolveDates(travelDate: string, departure: string, arrival: string) {
+  const depMins = timeToMinutes(departure);
+  const arrMins = timeToMinutes(arrival);
+  const isOvernight = arrMins <= depMins; // arrival is same time or earlier → next day
+  const depDate = travelDate;
+  const arrDate = isOvernight ? addDays(travelDate, 1) : travelDate;
+  return { depDate, arrDate, isOvernight };
 }
 
 // ─── Helper: transform BusResult → Schedule shape BookingModal expects ────────
@@ -41,7 +74,7 @@ const toSchedule = (bus: BusResult) => ({
   arrival:   bus.arrival,
   seats:     bus.seats,
   bus: {
-    total_seats: bus.total_seats ?? 40, // fallback to 40 if API doesn't return it
+    total_seats: bus.total_seats ?? 40,
   },
 });
 
@@ -107,8 +140,16 @@ const ConfidenceBadge = ({ value }: { value: number }) => {
 };
 
 // ─── Main BusCard component ───────────────────────────────────────────────────
-const BusCard: React.FC<BusCardProps> = ({ bus }) => {
+const BusCard: React.FC<BusCardProps> = ({ bus, travelDate }) => {
   const [open, setOpen] = useState(false);
+
+  const today = new Date().toISOString().split("T")[0];
+  const baseDate = travelDate || today;
+
+  const depTime = bus.departure.slice(0, 5); // "HH:MM"
+  const arrTime = bus.arrival.slice(0, 5);   // "HH:MM"
+
+  const { depDate, arrDate, isOvernight } = resolveDates(baseDate, depTime, arrTime);
 
   return (
     <div style={{
@@ -156,26 +197,54 @@ const BusCard: React.FC<BusCardProps> = ({ bus }) => {
         gap: "24px",
         marginBottom: "14px",
         flexWrap: "wrap",
+        alignItems: "flex-start",
       }}>
+        {/* Departure */}
         <div>
           <p style={{ margin: 0, fontSize: "11px", color: "#9ca3af" }}>Departure</p>
-          <p style={{ margin: 0, fontSize: "15px", fontWeight: 600 }}>
-            {bus.departure.slice(0, 5)}
+          <p style={{ margin: 0, fontSize: "15px", fontWeight: 600 }}>{depTime}</p>
+          <p style={{ margin: "2px 0 0", fontSize: "11px", color: "#6b7280" }}>
+            {formatShortDate(depDate)}
           </p>
         </div>
+
         <div style={{ fontSize: "20px", color: "#d1d5db", alignSelf: "center" }}>→</div>
+
+        {/* Arrival */}
         <div>
           <p style={{ margin: 0, fontSize: "11px", color: "#9ca3af" }}>Arrival</p>
           <p style={{ margin: 0, fontSize: "15px", fontWeight: 600 }}>
-            {bus.arrival.slice(0, 5)}
+            {arrTime}
+            {/* Overnight indicator */}
+            {isOvernight && (
+              <span style={{
+                marginLeft: "5px",
+                fontSize: "10px",
+                fontWeight: 600,
+                color: "#7c3aed",
+                background: "#f3e8ff",
+                padding: "1px 6px",
+                borderRadius: "999px",
+                verticalAlign: "middle",
+              }}>
+                +1
+              </span>
+            )}
+          </p>
+          <p style={{ margin: "2px 0 0", fontSize: "11px", color: isOvernight ? "#7c3aed" : "#6b7280" }}>
+            {formatShortDate(arrDate)}
           </p>
         </div>
+
+        {/* Fare */}
         <div style={{ marginLeft: "auto" }}>
           <p style={{ margin: 0, fontSize: "11px", color: "#9ca3af" }}>Fare</p>
           <p style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: "#7c3aed" }}>
             ₹{parseFloat(bus.fare).toFixed(0)}
           </p>
         </div>
+
+        {/* Seats */}
         <div>
           <p style={{ margin: 0, fontSize: "11px", color: "#9ca3af" }}>Seats left</p>
           <p style={{ margin: 0, fontSize: "15px", fontWeight: 600 }}>
@@ -266,11 +335,11 @@ const BusCard: React.FC<BusCardProps> = ({ bus }) => {
             fontWeight: 500,
           }}
         >
-          {bus.seats === 0 ? "Sold Out" : "Book Now"}
+          {bus.seats === 0 ? "Sold Out" : "Book Now →"}
         </button>
       </div>
 
-      {/* Booking Modal — pass a properly shaped schedule object */}
+      {/* Booking Modal */}
       {open && (
         <BookingModal
           schedule={toSchedule(bus)}

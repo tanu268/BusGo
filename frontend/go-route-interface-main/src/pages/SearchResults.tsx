@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Search, Bus, AlertCircle } from "lucide-react";
+import { Search, Bus, AlertCircle, Calendar } from "lucide-react";
 import BusCard from "../components/BusCard";
 import { fetchRecommendations, BusResult } from "../lib/api";
 
@@ -29,6 +29,13 @@ const SEARCH_TIPS = [
   { icon: " ", tip: "Use nearby cities", detail: "Try a major hub city close to your destination."        },
   { icon: " ", tip: "Off-peak routes",   detail: "Fewer buses run on weekends or late nights."            },
 ];
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function formatDisplayDate(dateStr: string): string {
+  if (!dateStr) return "";
+  const d = new Date(dateStr + "T00:00:00");
+  return d.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+}
 
 // ─── Empty state SVG ──────────────────────────────────────────────────────────
 const EmptyIllustration: React.FC = () => (
@@ -66,9 +73,10 @@ const EmptyIllustration: React.FC = () => (
 
 // ─── Main component ───────────────────────────────────────────────────────────
 const SearchResults: React.FC = () => {
-  const [searchParams] = useSearchParams(); // ✅ fixed from window.location.search
+  const [searchParams] = useSearchParams();
   const source      = searchParams.get("source")      || "";
   const destination = searchParams.get("destination") || "";
+  const date        = searchParams.get("date")        || new Date().toISOString().split("T")[0];
   const navigate    = useNavigate();
 
   const [preference, setPreference] = useState("balanced");
@@ -95,7 +103,7 @@ const SearchResults: React.FC = () => {
   }, [source, destination, preference]);
 
   const handleRouteClick = (from: string, to: string) =>
-    navigate(`/search?source=${encodeURIComponent(from)}&destination=${encodeURIComponent(to)}`);
+    navigate(`/search?source=${encodeURIComponent(from)}&destination=${encodeURIComponent(to)}&date=${encodeURIComponent(date)}`);
 
   return (
     <div style={{ minHeight:"calc(100vh - 3.5rem)", background:"#f3f4f8" }}>
@@ -165,15 +173,33 @@ const SearchResults: React.FC = () => {
             </h1>
           </div>
 
-          {/* Bus count */}
-          <p style={{
-            margin:"0 0 28px 50px", fontSize:"14px",
-            color: loading ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.42)",
+          {/* Date + bus count row */}
+          <div style={{
+            display:"flex", alignItems:"center", gap:"16px",
+            margin:"0 0 28px 50px", flexWrap:"wrap",
           }}>
-            {loading ? "Searching…" : `${total} bus${total !== 1 ? "es" : ""} found`}
-          </p>
+            {/* Date badge */}
+            <div style={{
+              display:"flex", alignItems:"center", gap:"6px",
+              background:"rgba(99,102,241,0.15)", border:"1px solid rgba(99,102,241,0.3)",
+              borderRadius:"999px", padding:"4px 12px",
+            }}>
+              <Calendar size={12} color="#a5b4fc"/>
+              <span style={{ fontSize:"13px", color:"#a5b4fc", fontWeight:600 }}>
+                {formatDisplayDate(date)}
+              </span>
+            </div>
 
-          {/* Preference pills — inside the navy header */}
+            {/* Bus count */}
+            <p style={{
+              margin:0, fontSize:"14px",
+              color: loading ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.42)",
+            }}>
+              {loading ? "Searching…" : `${total} bus${total !== 1 ? "es" : ""} found`}
+            </p>
+          </div>
+
+          {/* Preference pills */}
           <div style={{ display:"flex", gap:"8px", flexWrap:"wrap" }}>
             {PREFERENCES.map(p => {
               const on = preference === p.value;
@@ -235,8 +261,6 @@ const SearchResults: React.FC = () => {
         {/* Empty state */}
         {!loading && !error && results.length === 0 && (
           <div style={{ animation:"sr-fade-up 0.4s ease both" }}>
-
-            {/* Illustration card */}
             <div style={{
               textAlign:"center", padding:"48px 24px 36px",
               background:"#fff", border:"1px solid #e5e7eb",
@@ -254,7 +278,8 @@ const SearchResults: React.FC = () => {
               <p style={{ fontSize:"14px", color:"#6b7280", margin:"0 0 24px", lineHeight:1.6 }}>
                 We couldn't find any scheduled buses from{" "}
                 <strong style={{ color:"#374151" }}>{source}</strong> to{" "}
-                <strong style={{ color:"#374151" }}>{destination}</strong> right now.
+                <strong style={{ color:"#374151" }}>{destination}</strong> on{" "}
+                <strong style={{ color:"#374151" }}>{formatDisplayDate(date)}</strong>.
               </p>
               <button className="sr-cta" onClick={() => navigate("/")} style={{
                 background:"linear-gradient(135deg,#4f6ef7,#7c3aed)",
@@ -318,9 +343,9 @@ const SearchResults: React.FC = () => {
           </div>
         )}
 
-        {/* Results */}
+        {/* Results — pass travelDate to BusCard */}
         {!loading && results.map(bus => (
-          <BusCard key={bus.bus_id} bus={bus}/>
+          <BusCard key={bus.bus_id} bus={bus} travelDate={date} />
         ))}
       </div>
     </div>
