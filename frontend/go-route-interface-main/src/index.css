@@ -1,0 +1,603 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    --foreground: 220 20% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 10%;
+
+    --primary: 220 72% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 215 20% 94%;
+    --secondary-foreground: 220 20% 20%;
+
+    --muted: 215 20% 95%;
+    --muted-foreground: 215 14% 46%;
+
+    --accent: 215 20% 93%;
+    --accent-foreground: 220 20% 10%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 72% 42%;
+    --success-foreground: 0 0% 100%;
+
+    --border: 215 20% 90%;
+    --input: 215 20% 90%;
+    --ring: 220 72% 50%;
+
+    --radius: 0.625rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+    --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  .dark {
+    --background: 222 22% 8%;
+    --foreground: 210 20% 95%;
+
+    --card: 222 20% 11%;
+    --card-foreground: 210 20% 95%;
+
+    --popover: 222 20% 11%;
+    --popover-foreground: 210 20% 95%;
+
+    --primary: 220 72% 58%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 16% 18%;
+    --secondary-foreground: 210 20% 90%;
+
+    --muted: 220 16% 16%;
+    --muted-foreground: 215 14% 55%;
+
+    --accent: 220 16% 18%;
+    --accent-foreground: 210 20% 95%;
+
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 60% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --border: 220 16% 18%;
+    --input: 220 16% 18%;
+    --ring: 220 72% 58%;
+
+    --sidebar-background: 222 22% 8%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 16% 16%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 220 16% 18%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+  }
+
+  code, pre {
+    font-family: var(--font-mono);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   BUSGO HOME PAGE STYLES
+   ═══════════════════════════════════════════════════════ */
+
+@keyframes busgo-fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes busgo-glow-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%       { opacity: 0.8; transform: scale(1.08); }
+}
+
+@keyframes busgo-dot-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+.busgo-home {
+  min-height: calc(100vh - 3.5rem);
+  font-family: var(--font-sans);
+}
+
+/* ── Hero ─────────────────────────────────────── */
+.busgo-hero {
+  position: relative;
+  overflow: hidden;
+  background: #080e1f;
+  padding: 80px 24px 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.busgo-hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(56, 100, 255, 0.28) 0%, transparent 60%),
+    linear-gradient(180deg, #080e1f 0%, #0c1528 100%);
+  pointer-events: none;
+}
+
+.busgo-hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+.busgo-hero-glow {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: busgo-glow-pulse 6s ease-in-out infinite;
+}
+
+.busgo-glow-left {
+  background: radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%);
+  top: -150px;
+  left: -150px;
+}
+
+.busgo-glow-right {
+  background: radial-gradient(circle, rgba(14,165,233,0.14) 0%, transparent 70%);
+  bottom: -150px;
+  right: -150px;
+  animation-delay: -3s;
+}
+
+.busgo-hero-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 680px;
+  width: 100%;
+  text-align: center;
+  animation: busgo-fade-up 0.6s ease both;
+}
+
+/* Badge */
+.busgo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(99,102,241,0.15);
+  border: 1px solid rgba(99,102,241,0.35);
+  color: #a5b4fc;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 16px;
+  border-radius: 999px;
+  margin-bottom: 28px;
+  letter-spacing: 0.3px;
+}
+
+.busgo-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #818cf8;
+  animation: busgo-dot-pulse 2s ease-in-out infinite;
+}
+
+/* Heading */
+.busgo-heading {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 6vw, 60px);
+  font-weight: 800;
+  color: #f1f5ff;
+  line-height: 1.1;
+  letter-spacing: -2px;
+  margin: 0 0 16px;
+}
+
+.busgo-heading-accent {
+  background: linear-gradient(90deg, #818cf8 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.busgo-subheading {
+  font-size: 17px;
+  color: rgba(241,245,255,0.55);
+  margin: 0 0 40px;
+  line-height: 1.6;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Search card */
+.busgo-search-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 8px;
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin-bottom: 20px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+@media (max-width: 640px) {
+  .busgo-search-card {
+    flex-direction: column;
+    padding: 12px;
+    gap: 8px;
+  }
+}
+
+.busgo-search-fields {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+@media (max-width: 640px) {
+  .busgo-search-fields {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .busgo-search-divider {
+    transform: rotate(90deg);
+  }
+}
+
+.busgo-search-field {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  transition: background 0.15s;
+}
+
+.busgo-search-field:focus-within {
+  background: rgba(255,255,255,0.07);
+}
+
+.busgo-field-icon {
+  width: 16px;
+  height: 16px;
+  color: rgba(255,255,255,0.35);
+  flex-shrink: 0;
+}
+
+.busgo-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #f1f5ff;
+  font-size: 15px;
+  font-family: var(--font-sans);
+  width: 100%;
+}
+
+.busgo-input::placeholder {
+  color: rgba(255,255,255,0.28);
+}
+
+/* Divider with swap button */
+.busgo-search-divider {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 0 4px;
+}
+
+.busgo-divider-line {
+  width: 1px;
+  height: 28px;
+  background: rgba(255,255,255,0.1);
+}
+
+.busgo-swap-btn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.5);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.busgo-swap-btn:hover {
+  background: rgba(255,255,255,0.14);
+  color: #fff;
+  transform: rotate(180deg);
+}
+
+/* Search button */
+.busgo-search-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #4f6ef7 0%, #3b55e6 100%);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  padding: 14px 24px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(79,110,247,0.45);
+  flex-shrink: 0;
+}
+
+.busgo-search-btn:hover {
+  background: linear-gradient(135deg, #5f7ef8 0%, #4b65f7 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(79,110,247,0.55);
+}
+
+.busgo-search-btn:active {
+  transform: translateY(0);
+}
+
+.busgo-btn-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Popular routes */
+.busgo-popular {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  animation: busgo-fade-up 0.7s ease 0.15s both;
+}
+
+.busgo-popular-label {
+  font-size: 12px;
+  color: rgba(255,255,255,0.3);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.busgo-route-pill {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.6);
+  font-size: 12px;
+  font-family: var(--font-sans);
+  padding: 5px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.busgo-route-pill:hover {
+  background: rgba(255,255,255,0.11);
+  color: #fff;
+  border-color: rgba(255,255,255,0.2);
+}
+
+/* ── Stats strip ──────────────────────────────── */
+.busgo-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: #fff;
+  border-bottom: 1px solid #e8eaf0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+@media (max-width: 640px) {
+  .busgo-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.dark .busgo-stats {
+  background: hsl(222, 20%, 11%);
+  border-bottom-color: hsl(220, 16%, 18%);
+}
+
+.busgo-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px;
+  border-right: 1px solid #e8eaf0;
+}
+
+.dark .busgo-stat {
+  border-right-color: hsl(220, 16%, 18%);
+}
+
+.busgo-stat:last-child {
+  border-right: none;
+}
+
+.busgo-stat-value {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e2a4a;
+  letter-spacing: -0.5px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.dark .busgo-stat-value {
+  color: #e8edf8;
+}
+
+.busgo-stat-label {
+  font-size: 12px;
+  color: #8892a4;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Features ─────────────────────────────────── */
+.busgo-features {
+  padding: 80px 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.busgo-features-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.busgo-section-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700;
+  color: #1e2a4a;
+  letter-spacing: -1px;
+  margin: 0 0 12px;
+  line-height: 1.15;
+}
+
+.dark .busgo-section-title {
+  color: #e8edf8;
+}
+
+.busgo-section-sub {
+  font-size: 16px;
+  color: #8892a4;
+  max-width: 400px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.busgo-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .busgo-feature-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.busgo-feature-card {
+  background: #fff;
+  border: 1px solid #e8eaf0;
+  border-radius: 20px;
+  padding: 32px 28px;
+  position: relative;
+  transition: all 0.2s;
+  cursor: default;
+}
+
+.dark .busgo-feature-card {
+  background: hsl(222, 20%, 11%);
+  border-color: hsl(220, 16%, 18%);
+}
+
+.busgo-feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.08);
+  border-color: #d0d4e0;
+}
+
+.dark .busgo-feature-card:hover {
+  box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+  border-color: hsl(220, 16%, 25%);
+}
+
+.busgo-feature-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.busgo-feature-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e2a4a;
+  margin: 0 0 10px;
+  letter-spacing: -0.3px;
+}
+
+.dark .busgo-feature-title {
+  color: #e8edf8;
+}
+
+.busgo-feature-desc {
+  font-size: 14px;
+  color: #8892a4;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.busgo-feature-arrow {
+  position: absolute;
+  bottom: 28px;
+  right: 28px;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.busgo-feature-card:hover .busgo-feature-arrow {
+  opacity: 1;
+  transform: translateX(3px);
+}

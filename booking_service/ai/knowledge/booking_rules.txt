@@ -1,0 +1,26 @@
+BUSGO BOOKING RULES AND SEAT POLICIES
+
+Booking Rules:
+- Each passenger must have a valid booking with a unique seat number.
+- A maximum of 6 seats can be booked in a single transaction.
+- Bookings must be made at least 30 minutes before departure.
+- Children below 5 years travel free but do not get a separate seat.
+- Children between 5 and 12 years are charged 50% of the adult fare.
+
+Seat Selection:
+- Window seats are numbered 1, 4, 5, 8, 9 and so on in most buses.
+- Sleeper buses have lower and upper berths. Lower berths are preferred for elderly passengers.
+- Front seats (1 to 4) are recommended for passengers prone to motion sickness.
+- Emergency exit rows have extra legroom but cannot be assigned to elderly or disabled passengers.
+
+ID and Boarding:
+- Passengers must carry a valid government-issued photo ID during travel.
+- Boarding closes 10 minutes before departure. Late arrivals may forfeit their seat.
+- The booking confirmation SMS or email must be shown at boarding.
+- Name on booking must match the ID presented at boarding.
+
+Luggage Policy:
+- Each passenger is allowed one bag up to 15 kg in the luggage compartment.
+- One small cabin bag up to 5 kg is allowed inside the bus.
+- Excess luggage is charged at 20 rupees per kg.
+- Prohibited items include flammable materials, weapons, and perishable food.
