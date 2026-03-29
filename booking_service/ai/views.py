@@ -189,3 +189,79 @@ class RecommendView(View):
             "results":    results,
             "meta":       {"total": len(results)},
         })
+
+# ─── ADD THIS AT THE BOTTOM OF views.py ──────────────────────────────────────
+
+from .rag_service import RAGService
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class ChatView(View):
+
+    def post(self, request):
+        try:
+            body     = json.loads(request.body)
+            question = body.get("message", "").strip()
+            context  = body.get("context", None)  # optional live context
+
+            if not question:
+                return JsonResponse({"error": "message is required"}, status=400)
+
+            # Get singleton RAG instance
+            rag    = RAGService.get_instance()
+            answer = rag.answer(question, context)
+
+            # Clean up tinyllama's verbose output
+            # It sometimes prints the question again — strip it
+            if "Answer:" in answer:
+                answer = answer.split("Answer:")[-1].strip()
+            if "Passenger question:" in answer:
+                answer = answer.split("Passenger question:")[0].strip()
+
+            return JsonResponse({
+                "answer": answer,
+                "source": "knowledge_base",
+            })
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+
+
+from .price_predictor import PricePredictorService
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class PricePredictView(View):
+
+    def post(self, request):
+        try:
+            body = json.loads(request.body)
+
+            # Required fields
+            schedule = {
+                "fare":             body.get("fare", 500),
+                "bus_type":         body.get("bus_type", "AC Seater"),
+                "available_seats":  body.get("available_seats", 20),
+            }
+            days_to_departure = int(body.get("days_to_departure", 7))
+
+            prediction = PricePredictorService.predict(schedule, days_to_departure)
+
+            return JsonResponse({
+                "success":         True,
+                "prediction":      prediction,
+            })
+
+        except FileNotFoundError:
+            return JsonResponse({
+                "success": False,
+                "error":   "Model not trained yet. Run train_model() first.",
+            }, status=500)
+        except Exception as e:
+            return JsonResponse({
+                "success": False,
+                "error":   str(e),
+            }, status=500)

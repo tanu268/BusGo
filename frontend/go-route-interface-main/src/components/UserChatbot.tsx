@@ -35,19 +35,24 @@ export default function UserChatbot() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/api/ai/chat/", {
+const res = await fetch("http://localhost:8000/api/ai/chat/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ message: userMsg, is_admin: false }),
+        body: JSON.stringify({ message: userMsg }),
       });
 
       const data = await res.json();
+
+      // Clean up any leftover prompt artifacts from tinyllama
+      let answer = data.answer || data.reply || "Sorry, I couldn't understand that.";
+      if (answer.includes("Answer:")) answer = answer.split("Answer:").pop()?.trim() || answer;
+      if (answer.includes("Passenger question:")) answer = answer.split("Passenger question:")[0].trim();
+
       setMessages((prev) => [
         ...prev,
         {
           role: "ai",
-          text: data.reply || "Sorry, I couldn't understand that.",
+          text: answer,
         },
       ]);
     } catch {
